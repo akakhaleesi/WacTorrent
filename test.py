@@ -18,10 +18,8 @@ import sys
 import os
 from pprint import pprint
 import subprocess
-# from PyQt5 import QtWidgets, QtGui, QtCore, Qt
-
-from PyQt5 import QtCore, QtGui
-from PyQt5.QtWidgets import QMainWindow,QTableWidget, QVBoxLayout,QTableWidgetItem, QPushButton,QWidget, QApplication, QInputDialog, QLineEdit, QFileDialog
+from PyQt5 import QtWidgets, QtGui,QtCore
+from PyQt5.QtWidgets import QMainWindow,QTableWidget, QTableView,QGridLayout,QVBoxLayout,QTableWidgetItem, QPushButton,QWidget, QApplication, QInputDialog, QLineEdit, QFileDialog
 
 class	FolderFile(QWidget):
 	# def __init__(self):
@@ -68,26 +66,32 @@ class	NewTorrent(QMainWindow):
 class	InitInterface(QMainWindow):
 	def __init__(self):
 		super().__init__()
-		# self.table = ['pause', 'delete', 'dl', getattr(FileTorrent, "FileTorrent")]
-		self.InitNavBar()
-
-	def		InitNavBar(self):
+		self.setWindowTitle("toto")
 		self.window = QWidget()
+		# self.table = ['pause', 'delete', 'dl', getattr(FileTorrent, "FileTorrent")]
+		self.window.setGeometry(600, 600, 450, 490)
 		self.layout = QVBoxLayout()
 		self.TorrentButton()
-		self.TableDl()
-		self.setGeometry(600, 600, 490, 450)
-		self.setWindowTitle('Event sender')
+		self.layout.addWidget(self.btn1)
+		self.InitNavBar()
+		self.layout.addWidget(self.tableWidget)
 		self.window.setLayout(self.layout)
-		self.show()
+		self.window.show()
+		
+
+	def		InitNavBar(self):
+		self.tableWidget = QTableView()
+		# self.tableWidget.setColumnCount(2)
+		# self.tableWidget.setItem(0,0, QTableWidgetItem("Cell (1,1)"))
+		# self.tableWidget.move(50, 0)
+
 
 	def		TorrentButton(self):
-		btn1 = QPushButton("Add torrent", self)
-		btn1.move(0, 0)
-		btn1.clicked.connect(self.buttonClicked)
-		# self.table[3]()
-		# for elem in self.table:
-			# print(elem)
+		self.btn1 = QPushButton("Add torrent", self)
+		self.btn1.setFixedSize(100, 30)
+		self.btn1.setGeometry(10, 10, 0, 0)
+		self.btn1.move(0, 0)
+		self.btn1.clicked.connect(self.buttonClicked)
 
 	def		TableDl(self):
 		print ("dl")
