@@ -20,26 +20,28 @@ from pprint import pprint
 import subprocess
 # from PyQt5 import QtWidgets, QtGui, QtCore, Qt
 
-
-from PyQt5.QtWidgets import QMainWindow, QPushButton, QWidget, QApplication, QInputDialog, QLineEdit, QFileDialog
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtWidgets import QMainWindow,QTableWidget, QVBoxLayout,QTableWidgetItem, QPushButton,QWidget, QApplication, QInputDialog, QLineEdit, QFileDialog
 
 class	FolderFile(QWidget):
-	def __init__(self):
-		super().__init__()
-		self.initUI()
+	# def __init__(self):
+		# super().__init__()
+		# return self.initUI()
 
-	def initUI(self):
-		self.openFileNameDialog()
+	# def initUI(self):
+		# return (self.openFileNameDialog())
 		# self.openFileNamesDialog()
 		# self.saveFileDialog()
 
-	def openFileNameDialog(self):
+	def explorer(self):
 		options = QFileDialog.Options()
 		options |= QFileDialog.DontUseNativeDialog
-		fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Python Files (*.py)", options=options)
-		if fileName:
-			print(fileName)
-	
+		file_location, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName(~/Dowload)", "","Torrent Files (*.torrent);;All Files (*)", options=options)
+		if file_location:
+			return (file_location)
+	def initDL(self, file):
+		print(file)
+
 	# def openFileNamesDialog(self):
 	# 	options = QFileDialog.Options()
 	# 	options |= QFileDialog.DontUseNativeDialog
@@ -54,37 +56,64 @@ class	FolderFile(QWidget):
 	# 	if fileName:
 	# 		print(fileName)
 
-class	NavButton(QMainWindow):
-	
+class	NewTorrent(QMainWindow):
+	def __init(self):
+		super().__init__()
+		self.intDL()
+
+	def initDL(self):
+		print ("okok")
+
+
+class	InitInterface(QMainWindow):
 	def __init__(self):
 		super().__init__()
-		
-		self.initUI()
-		
-		
-	def initUI(self):
-		btn1 = QPushButton("Add torrent", self)
-		btn2 = QPushButton("Button 2", self)
-		btn2.move(150, 0)
-		btn1.clicked.connect(self.buttonClicked)
-		btn2.clicked.connect(self.buttonClicked)
-		self.statusBar()
-		self.setGeometry(300, 300, 290, 150)
+		# self.table = ['pause', 'delete', 'dl', getattr(FileTorrent, "FileTorrent")]
+		self.InitNavBar()
+
+	def		InitNavBar(self):
+		self.window = QWidget()
+		self.layout = QVBoxLayout()
+		self.TorrentButton()
+		self.TableDl()
+		self.setGeometry(600, 600, 490, 450)
 		self.setWindowTitle('Event sender')
+		self.window.setLayout(self.layout)
 		self.show()
+
+	def		TorrentButton(self):
+		btn1 = QPushButton("Add torrent", self)
+		btn1.move(0, 0)
+		btn1.clicked.connect(self.buttonClicked)
+		# self.table[3]()
+		# for elem in self.table:
+			# print(elem)
+
+	def		TableDl(self):
+		print ("dl")
+		# self.corp = QLabel()
+		# self.corp.setLineWidth = 400
+		# self.corp.setRowCount(2)
+		# self.corp.setColumnCount(1)
+		# self.corp.setItem(0, 1,QTableWidgetItem("toto"))
 		
-		
+		# self.corp.move(0, 50)
+
 	def buttonClicked(self):
 		sender = self.sender()
-		pprint(sender)
-		ex2 = FolderFile()
+		ex2 = FolderFile().explorer()
+		init = FolderFile()
+		init.initDL(ex2)
 		self.statusBar().showMessage(sender.text() + ' was pressed')
 
-if __name__ == '__main__':
-	
+
+def		main():
 	app = QApplication(sys.argv)
-	ex = NavButton()
+	ex = InitInterface()
 	sys.exit(app.exec_())
+
+
+main()
 # ses = lt.session({'listen_interfaces': '0.0.0.0:443'})
 
 # info = lt.torrent_info(sys.argv[1])
