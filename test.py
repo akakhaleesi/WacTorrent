@@ -74,13 +74,14 @@ class	InitInterface(QMainWindow):
 		self.TorrentButton()
 		self.layout.addWidget(self.btn1)
 		self.InitNavBar()
-		self.layout.addWidget(self.tableWidget)
+		self.layout.addWidget(self.tableview)
 		self.window.setLayout(self.layout)
 		self.window.show()
 		
 
 	def		InitNavBar(self):
-		self.tableWidget = QTableView()
+		self.tableview = QTableView()
+		self.tableview.horizontalHeaders(self,["file"])
 		# self.tableWidget.setColumnCount(2)
 		# self.tableWidget.setItem(0,0, QTableWidgetItem("Cell (1,1)"))
 		# self.tableWidget.move(50, 0)
