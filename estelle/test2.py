@@ -16,29 +16,42 @@ import libtorrent as lt
 import time
 import sys
 import os
-import random
 from pprint import pprint
 import subprocess
-from PyQt5.QtGui import QStandardItemModel, QStandardItem
-from PyQt5 import QtWidgets, QtGui,QtCore
-from PyQt5.QtWidgets import QMainWindow,QTableWidget,QAbstractItemView,QTableView,QGridLayout,QVBoxLayout,QTableWidgetItem, QPushButton,QWidget, QApplication, QInputDialog, QLineEdit, QFileDialog
+# from PyQt5 import QtWidgets, QtGui, QtCore, Qt
+
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtWidgets import QMainWindow,QTableWidget, QVBoxLayout,QTableWidgetItem, QPushButton,QWidget, QApplication, QInputDialog, QLineEdit, QFileDialog
 
 class	FolderFile(QWidget):
+	# def __init__(self):
+		# super().__init__()
+		# return self.initUI()
 
-	def explorer(self):
-		options = QFileDialog.Options()
-		options |= QFileDialog.DontUseNativeDialog
-		file_location, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName(~/Dowload)", "","Torrent Files (*.torrent);;All Files (*)", options=options)
-		if file_location:
-			return (file_location)
+	# def initUI(self):
+		# return (self.openFileNameDialog())
+		# self.openFileNamesDialog()
+		# self.saveFileDialog()
 
-	def explorerDestination(self):
-		folder = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
-		if folder:
-			return (folder)
+    def explorer(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        file_location, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName(~/Dowload)", "","Torrent Files (*.torrent);;All Files (*)", options=options)
+        if file_location:
+            return (file_location)
 
-	def initDL(self, src, dest):
-		print(dest)
+    def explorerDestination(self):
+        folder = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
+
+        if folder:
+            print(folder)
+            return (folder)
+
+    def initDL(self, file):
+        #sender = self.sender()
+        destination = FolderFile().explorerDestination()
+        #init = FolderFile()
+        #print(file)
 
 	# def openFileNamesDialog(self):
 	# 	options = QFileDialog.Options()
@@ -46,7 +59,7 @@ class	FolderFile(QWidget):
 	# 	files, _ = QFileDialog.getOpenFileNames(self,"QFileDialog.getOpenFileNames()", "","All Files (*);;Python Files (*.py)", options=options)
 	# 	if files:
 	# 		print(files)
-	
+
 	# def saveFileDialog(self):
 	# 	options = QFileDialog.Options()
 	# 	options |= QFileDialog.DontUseNativeDialog
@@ -66,54 +79,26 @@ class	NewTorrent(QMainWindow):
 class	InitInterface(QMainWindow):
 	def __init__(self):
 		super().__init__()
-		self.setWindowTitle("toto")
-		self.window = QWidget()
 		# self.table = ['pause', 'delete', 'dl', getattr(FileTorrent, "FileTorrent")]
-		self.window.setGeometry(600, 600, 600, 490)
-		self.layout = QVBoxLayout()
-		self.TorrentButton()
-		self.layout.addWidget(self.btn1)
 		self.InitNavBar()
-		self.layout.addWidget(self.tableview)
-		self.window.setLayout(self.layout)
-		self.window.show()
-		
 
 	def		InitNavBar(self):
-		header = ['file', "toto"]
-		self.model = QStandardItemModel()
-		self.model.setHorizontalHeaderLabels(['Status', 'File', 'Progress',
-		'Seeder', 'Leecher'])
-		self.tableview = QTableView()
-		self.tableview.setModel(self.model)
-		self.tableview.setEditTriggers(QAbstractItemView.NoEditTriggers)
-		# self.populate()
-
-	# def populate(self):
-	# 	# GENERATE A 4x10 GRID OF RANDOM NUMBERS.
-	# 	# VALUES WILL CONTAIN A LIST OF INT.
-	# 	# MODEL ONLY ACCEPTS STRINGS - MUST CONVERT.
-	# 	values = []
-	# 	for i in range(1):
-	# 		sub_values = []
-	# 		for i in range(4):
-	# 			value = random.randrange(1, 100)
-	# 			sub_values.append(value)
-	# 		values.append(sub_values)
- 
-	# 	for value in values:
-	# 		row = []
-	# 		for item in value:
-	# 			cell = QStandardItem(str(item))
-	# 			row.append(cell)
-	# 		self.model.appendRow(row)
+		self.window = QWidget()
+		self.layout = QVBoxLayout()
+		self.TorrentButton()
+		self.TableDl()
+		self.setGeometry(600, 600, 490, 450)
+		self.setWindowTitle('Event sender')
+		self.window.setLayout(self.layout)
+		self.show()
 
 	def		TorrentButton(self):
-		self.btn1 = QPushButton("Add torrent", self)
-		self.btn1.setFixedSize(100, 30)
-		self.btn1.setGeometry(10, 10, 0, 0)
-		self.btn1.move(0, 0)
-		self.btn1.clicked.connect(self.buttonClicked)
+		btn1 = QPushButton("Add torrent", self)
+		btn1.move(0, 0)
+		btn1.clicked.connect(self.buttonClicked)
+		# self.table[3]()
+		# for elem in self.table:
+			# print(elem)
 
 	def		TableDl(self):
 		print ("dl")
@@ -122,15 +107,14 @@ class	InitInterface(QMainWindow):
 		# self.corp.setRowCount(2)
 		# self.corp.setColumnCount(1)
 		# self.corp.setItem(0, 1,QTableWidgetItem("toto"))
-		
+
 		# self.corp.move(0, 50)
 
 	def buttonClicked(self):
 		sender = self.sender()
+		ex2 = FolderFile().explorer()
 		init = FolderFile()
-		src = init.explorer()
-		dest = init.explorerDestination()
-		init.initDL(src, dest)
+		init.initDL(ex2)
 		self.statusBar().showMessage(sender.text() + ' was pressed')
 
 
