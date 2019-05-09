@@ -16,16 +16,16 @@ import libtorrent as lt
 import time
 import sys
 import os
-import random
 from pprint import pprint
 from threading import Thread
-import subprocess
-from PyQt5.QtGui import QStandardItemModel, QStandardItem
+from PyQt5.QtGui import QStandardItemModel, QStandardItem, QCloseEvent
 from PyQt5 import QtWidgets, QtGui,QtCore
-from PyQt5.QtWidgets import QMainWindow,QTableWidget,QAbstractItemView,QTableView,QGridLayout,QVBoxLayout,QTableWidgetItem, QPushButton,QWidget, QApplication, QInputDialog, QLineEdit, QFileDialog
+from PyQt5.QtWidgets import QMainWindow,QAction,QTableWidget,QAbstractItemView,QTableView,QGridLayout,QVBoxLayout,QTableWidgetItem, QPushButton,QWidget, QApplication, QInputDialog, QLineEdit, QFileDialog
 
 cell = ''
+tableThread = []
 dlValue = {'status': 'Dl', 'dlstat': 0, 'seeders':0, 'leecher':0, 'time': 0 }
+
 class	FolderFile(QWidget):
 
 	def explorer(self):
@@ -66,6 +66,7 @@ class	NewTorrent(Thread):
 		info = lt.torrent_info(self.data['src'])
 		h = ses.add_torrent({'ti': info, 'save_path': self.data['dest']})
 		status = h.status()
+		print(status.num_seeds)
 		while (not status.is_seeding and self.state == True):
 			print("=======================")
 			print(self.nrow)
@@ -73,6 +74,10 @@ class	NewTorrent(Thread):
 			print('\r%.2f%% complete (down: %.1f kB/s up: %.1f kB/s peers: %d) %s' % (
 			status.progress * 100, status.download_rate / 1000, status.upload_rate / 1000,
 				status.num_peers, status.state))
+			self.data['model'].item(self.nrow, 2).setText(str(status.progress * 100))
+			self.data['model'].item(self.nrow, 3).setText(str(status.num_peers))
+			self.data['model'].item(self.nrow, 4).setText(str(status.num_seeds))
+			# self.data['model'].item(self.nrow, 5).setText(str(status.upload_rate / 1000))
 			alerts = ses.pop_alerts()
 			for a in alerts:
 				if a.category() & lt.alert.category_t.error_notification:
@@ -81,65 +86,61 @@ class	NewTorrent(Thread):
 			time.sleep(1)
 
 		if (self.state == False):
-			print(self.nrow)
-			self.data['model'][self.nrow.row()][0] = "Pause"
-		print(h.name(), 'complete')
+			self.data['model'].item(self.nrow, 0).setText("Pause")
 
 
 class	InitInterface(QMainWindow):
 	def __init__(self):
 		super().__init__()
-		self.tableThread = []
 		self.row = 0
 		self.setWindowTitle("BayTorrent")
 		self.window = QWidget()
 		self.window.setGeometry(1000, 1000, 1000, 490)
 		self.layout = QVBoxLayout()
 		self.TorrentButton()
-		self.layout.addWidget(self.btn1)
 		self.BodyPannel()
 		self.layout.addWidget(self.tableview)
 		self.window.setLayout(self.layout)
+
 		self.window.show()
-		
 
 	def		BodyPannel(self):
 		self.model = QStandardItemModel()
 		self.model.setHorizontalHeaderLabels(['Status', 'File', 'Progress',
-		'Seeder', 'Leecher', 'Time'])
+		'Seeder', 'Leecher', 'Speed Up', 'Speed Dl','Time'])
 		self.tableview = QTableView()
 		self.tableview.setModel(self.model)
 		self.tableview.setEditTriggers(QAbstractItemView.NoEditTriggers)
-		self.tableview.clicked.connect(self.viewClicked)
 
 	def		TorrentButton(self):
-		self.btn1 = QPushButton("Add torrent", self)
-		self.btn1.setFixedSize(100, 30)
-		self.btn1.setGeometry(10, 10, 0, 0)
-		self.btn1.move(0, 0)
-		self.btn1.clicked.connect(self.buttonClicked)
+		self.btnTorrent = QPushButton("Add torrent", self)
+		self.btnTorrent.setFixedSize(100, 30)
+		self.btnTorrent.setGeometry(10, 10, 0, 0)
+		self.btnTorrent.move(0, 0)
+		self.btnTorrent.clicked.connect(self.buttonClicked)
+		self.layout.addWidget(self.btnTorrent)
 
-	def buttonClicked(self):
+	def		buttonClicked(self):
 		sender = self.sender()
 		init = FolderFile()
 		src = init.explorer()
 		dest = init.explorerDestination()
-		self.tableThread.append(NewTorrent({'src': src, 'dest': dest, 'table': self.tableview,
+		tableThread.append(NewTorrent({'src': src, 'dest': dest, 'table': self.tableview,
 		'model': self.model}))
 		self.nb = self.model.rowCount()
-		self.tableThread[len(self.tableThread) - 1].start()
+		tableThread[len(tableThread) - 1].start()
 
-	def		viewClicked(self, clickedIndex):
-		row = clickedIndex.row()
-		self.row = row
-		self.tableThread[row].state = False
-
+def		close():
+	c = 0
+	while c < len(tableThread):
+		tableThread[c].state = False
+		tableThread[c].join()
+		c = c + 1
 
 def		main():
 	app = QApplication(sys.argv)
 	ex = InitInterface()
+	app.aboutToQuit.connect(close)
 	sys.exit(app.exec_())
 
-
 main()
-
