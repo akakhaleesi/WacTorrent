@@ -15,6 +15,11 @@ import libtorrent as lt
 import time
 from PyQt5.QtGui import (QCloseEvent, QStandardItem, QStandardItemModel)
 from threading import Thread
+from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication,
+							QFileDialog, QGridLayout, QInputDialog, QLineEdit,
+							QMainWindow, QPushButton, QTableView,
+							QTableWidget, QTableWidgetItem, QVBoxLayout,
+							QWidget)
 
 class	NewTorrent(Thread):
 
@@ -108,3 +113,17 @@ def		is_inarray(table, stri):
 		if (item == stri):
 			return (True)
 	return (False)
+
+class	FolderFile(QWidget):
+
+	def explorer(self):
+		options = QFileDialog.Options()
+		options |= QFileDialog.DontUseNativeDialog
+		file_location, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName(~/Dowload)", "","Torrent Files (*.torrent);;All Files (*)", options=options)
+		if file_location:
+			return (file_location)
+
+	def explorerDestination(self):
+		folder = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
+		if folder:
+			return (folder)

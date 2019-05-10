@@ -16,7 +16,7 @@ import os
 import sys
 import time
 from pprint import pprint
-from TorrentEngine import NewTorrent
+from TorrentEngine import NewTorrent, FolderFile
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import (QCloseEvent, QStandardItem, QStandardItemModel)
 from PyQt5.QtWidgets import (QAbstractItemView, QAction, QApplication,
@@ -30,20 +30,6 @@ tableThread = []
 torrentVal = ['Status', 'File', 'Progress',
 		'Seeder', 'Leecher', 'Speed Up', 'Speed Dl','Time', 'size']
 
-class	FolderFile(QWidget):
-
-	def explorer(self):
-		options = QFileDialog.Options()
-		options |= QFileDialog.DontUseNativeDialog
-		file_location, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName(~/Dowload)", "","Torrent Files (*.torrent);;All Files (*)", options=options)
-		if file_location:
-			return (file_location)
-
-	def explorerDestination(self):
-		folder = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
-		if folder:
-			return (folder)
-
 class	InitInterface(QMainWindow):
 	def __init__(self):
 		super().__init__()
@@ -55,7 +41,6 @@ class	InitInterface(QMainWindow):
 		self.TorrentButton()
 		self.PauseTorrent()
 		self.PlayTorrent()
-		self.DeleteTorrent()
 		self.BodyPannel()
 		self.layout.addWidget(self.tableview)
 		self.window.setLayout(self.layout)
@@ -73,14 +58,15 @@ class	InitInterface(QMainWindow):
 		self.btnTorrent = QPushButton("Add torrent", self)
 		self.btnTorrent.setFixedSize(100, 30)
 		self.btnTorrent.setGeometry(10, 10, 0, 0)
-		self.btnTorrent.move(0, 0)
+		# self.btnTorrent.move(0, 0)
 		self.btnTorrent.clicked.connect(self.buttonClicked)
 		self.layout.addWidget(self.btnTorrent)
 	
 	def		PauseTorrent(self):
 		self.btnPause = QPushButton("Pause", self)
 		self.btnPause.setFixedSize(100, 30)
-		self.btnPause.setGeometry(10, 10, 0, 0)
+		self.btnPause.setGeometry(10, 10, 30, 0)
+		self.btnPause.move(30, 30)
 		self.btnPause.clicked.connect(self.Pause)
 		self.layout.addWidget(self.btnPause)
 	
@@ -127,7 +113,6 @@ class	InitInterface(QMainWindow):
 
 	def		viewClicked(self, clickedIndex):
 		self.row = clickedIndex.row()
-		print(self.row)
 
 def		close():
 	c = 0
